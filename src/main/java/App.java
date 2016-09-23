@@ -104,9 +104,11 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
-    get("/clients/profile", (request, response) -> {
-      //TODO
-      model.put("template", "templates/index.vtl");
+    get("/stylists/profile", (request, response) -> {
+      if (activeStylist == null) {
+        response.redirect("/");
+      }
+      model.put("template", "templates/stylists/profile.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -179,8 +181,10 @@ public class App {
     }, new VelocityTemplateEngine());
 
     get("/clients/profile", (request, response) -> {
-      //TODO
-      model.put("template", "templates/index.vtl");
+      if (activeClient == null) {
+        response.redirect("/");
+      }
+      model.put("template", "templates/clients/profile.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
