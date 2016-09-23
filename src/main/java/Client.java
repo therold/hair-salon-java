@@ -81,6 +81,24 @@ public class Client {
     }
   }
 
+  public static List<Client> withStylistId(int stylistId) {
+    String sql = "SELECT * FROM clients WHERE stylistId = :stylistId;";
+    try(Connection con = DB.sql2o.open()) {
+      return con.createQuery(sql)
+        .addParameter("stylistId", stylistId)
+        .executeAndFetch(Client.class);
+    }
+  }
+
+  public static List<Client> search(String search) {
+    String sql = "SELECT * FROM clients WHERE name ~* :search;";
+    try(Connection con = DB.sql2o.open()) {
+      return con.createQuery(sql)
+        .addParameter("search", ".*" + search + ".*")
+        .executeAndFetch(Client.class);
+    }
+  }
+
   public static List<Client> all() {
     String sql = "SELECT * FROM clients;";
     try(Connection con = DB.sql2o.open()) {

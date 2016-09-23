@@ -55,6 +55,14 @@ public class StylistTest {
   }
 
   @Test
+  public void save_savesName_test() {
+    Stylist testStylist = new Stylist("Test");
+    testStylist.save();
+    Stylist savedStylist = Stylist.find(testStylist.getId());
+    assertEquals("Test", savedStylist.getName());
+  }
+
+  @Test
   public void all_returnsAllInstancesOfStylist_true() {
     Stylist firstStylist = new Stylist("First");
     firstStylist.save();
@@ -94,6 +102,28 @@ public class StylistTest {
     Stylist testStylist = new Stylist("Test");
     testStylist.save();
     assertEquals(null, Stylist.findByName("NotATest"));
+  }
+
+  @Test
+  public void search_returnsStylistWithSimilarNameCaseInsensitve_listOfStylists() {
+    Stylist firstStylist = new Stylist("Bob");
+    firstStylist.save();
+    Stylist secondStylist = new Stylist("Tom");
+    secondStylist.save();
+    Stylist thirdStylist = new Stylist("Tommy");
+    thirdStylist.save();
+    assertEquals(false, Stylist.search("tom").contains(firstStylist));
+    assertEquals(true, Stylist.search("tom").contains(secondStylist));
+    assertEquals(true, Stylist.search("tom").contains(thirdStylist));
+  }
+
+  @Test
+  public void search_returnsNothingForUnknownStylistId_0() {
+    Stylist firstStylist = new Stylist("Bob");
+    firstStylist.save();
+    Stylist secondStylist = new Stylist("George");
+    secondStylist.save();
+    assertEquals(0, Stylist.search("tom").size());
   }
 
   @Test

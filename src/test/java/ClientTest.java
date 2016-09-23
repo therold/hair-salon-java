@@ -1,3 +1,5 @@
+import java.util.List;
+import java.util.ArrayList;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -124,6 +126,55 @@ public class ClientTest {
     Client testClient = new Client("Test");
     testClient.save();
     assertEquals(null, Client.findByName("NotATest"));
+  }
+
+  @Test
+  public void withStylistId_returnsClientsWithSameStylistId_listOfClients() {
+    Client firstClient = new Client("Test");
+    firstClient.setStylistId(1);
+    firstClient.save();
+    Client secondClient = new Client("Second");
+    secondClient.setStylistId(2);
+    secondClient.save();
+    Client thirdClient = new Client("Second");
+    thirdClient.setStylistId(2);
+    thirdClient.save();
+    assertEquals(false, Client.withStylistId(2).contains(firstClient));
+    assertEquals(true, Client.withStylistId(2).contains(secondClient));
+    assertEquals(true, Client.withStylistId(2).contains(thirdClient));
+  }
+
+  @Test
+  public void withStylistId_returnsNothingForUnknownStylistId_0() {
+    Client firstClient = new Client("Test");
+    firstClient.setStylistId(1);
+    firstClient.save();
+    Client secondClient = new Client("Test");
+    secondClient.setStylistId(2);
+    secondClient.save();
+    assertEquals(0, Client.withStylistId(3).size());
+  }
+
+  @Test
+  public void search_returnsClientWithSimilarNameCaseInsensitve_listOfClients() {
+    Client firstClient = new Client("Bob");
+    firstClient.save();
+    Client secondClient = new Client("Tom");
+    secondClient.save();
+    Client thirdClient = new Client("Tommy");
+    thirdClient.save();
+    assertEquals(false, Client.search("tom").contains(firstClient));
+    assertEquals(true, Client.search("tom").contains(secondClient));
+    assertEquals(true, Client.search("tom").contains(thirdClient));
+  }
+
+  @Test
+  public void search_returnsNothingForUnknownStylistId_0() {
+    Client firstClient = new Client("Bob");
+    firstClient.save();
+    Client secondClient = new Client("George");
+    secondClient.save();
+    assertEquals(0, Client.search("tom").size());
   }
 
   @Test

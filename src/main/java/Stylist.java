@@ -70,6 +70,15 @@ public class Stylist {
     }
   }
 
+  public static List<Stylist> search(String search) {
+    String sql = "SELECT * FROM stylists WHERE name ~* :search;";
+    try(Connection con = DB.sql2o.open()) {
+      return con.createQuery(sql)
+        .addParameter("search", ".*" + search + ".*")
+        .executeAndFetch(Stylist.class);
+    }
+  }
+
   public static List<Stylist> all() {
     String sql = "SELECT * FROM stylists;";
     try(Connection con = DB.sql2o.open()) {
