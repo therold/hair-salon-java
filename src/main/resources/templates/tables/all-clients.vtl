@@ -3,12 +3,16 @@
     <thead>
       <th>Name</th>
       <th>Profile</th>
+      <th>Edit</th>
+      <th>Delete</th>
     </thead>
     <tbody>
       #foreach ($client in $clients)
         <tr>
           <td>$client.getName()</td>
           <td><a href="/clients/$client.getId()">View</a></td>
+          <td><a href="/clients/edit/$client.getId()">Edit</a></td>
+          <td><a href="/clients/delete/$client.getId()">Delete</a></td>
         </tr>
       #end
     </tbody>

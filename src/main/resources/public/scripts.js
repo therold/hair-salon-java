@@ -1,3 +1,5 @@
 $(document).ready(function() {
-    $('.sortable-table').DataTable();
+    $('.sortable-table').DataTable({
+      "searching": false
+    });
 } );

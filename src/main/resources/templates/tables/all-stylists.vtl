@@ -3,12 +3,16 @@
     <thead>
       <th>Name</th>
       <th>Profile</th>
+      <th>Edit</th>
+      <th>Delete</th>
     </thead>
     <tbody>
       #foreach ($stylist in $stylists)
         <tr>
           <td>$stylist.getName()</td>
           <td><a href="/stylists/$stylist.getId()">View</a></td>
+          <td><a href="/stylists/edit/$stylist.getId()">Edit</a></td>
+          <td><a href="/stylists/delete/$stylist.getId()">Delete</a></td>
         </tr>
       #end
     </tbody>

@@ -73,9 +73,34 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
+    get("/stylists/delete/:id", (request, response) -> {
+      Stylist stylist = tryFindStylist(request.params(":id"));
+      if(stylist != null) {
+        model.put("stylist", stylist);
+      }
+      model.put("template", "templates/stylists/delete.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/stylists/delete", (request, response) -> {
+      Stylist stylist = tryFindStylist(request.queryParams("stylistId"));
+      if(stylist != null) {
+        if(activeStylist != null && activeStylist.equals(stylist)) {
+          activeStylist = null;
+        }
+        stylist.delete();
+        response.redirect(request.session().attribute("Prev"));
+      }
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
     get("/stylists/search", (request, response) -> {
-      //TODO
-      model.put("template", "templates/index.vtl");
+      if(request.queryParams("s") != null) {
+        String search = request.queryParams("s");
+        model.put("stylists", Stylist.search(search));
+        model.put("search", search);
+      }
+      model.put("template", "templates/stylists/search.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -113,15 +138,9 @@ public class App {
     }, new VelocityTemplateEngine());
 
     get("/stylists/:id", (request, response) -> {
-      Integer stylistId = null;
-      try {
-        stylistId = Integer.parseInt(request.params(":id"));
-      } catch (NumberFormatException e) {
-        System.out.println("Error: " + e.getMessage());
-      }
-      Stylist stylist;
-      if(stylistId != null && Stylist.find(stylistId) != null) {
-        model.put("stylist", Stylist.find(stylistId));
+      Stylist stylist = tryFindStylist(request.params(":id"));
+      if(stylist != null) {
+        model.put("stylist", stylist);
       }
       model.put("template", "templates/stylists/view.vtl");
       return new ModelAndView(model, layout);
@@ -158,9 +177,34 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
+    get("/clients/delete/:id", (request, response) -> {
+      Client client = tryFindClient(request.params(":id"));
+      if(client != null) {
+        model.put("client", client);
+      }
+      model.put("template", "templates/clients/delete.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/clients/delete", (request, response) -> {
+      Client client = tryFindClient(request.queryParams("clientId"));
+      if(client != null) {
+        if(activeClient != null && activeClient.equals(client)) {
+          activeClient = null;
+        }
+        client.delete();
+        response.redirect(request.session().attribute("Prev"));
+      }
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
     get("/clients/search", (request, response) -> {
-      //TODO
-      model.put("template", "templates/index.vtl");
+      if(request.queryParams("s") != null) {
+        String search = request.queryParams("s");
+        model.put("clients", Client.search(search));
+        model.put("search", search);
+      }
+      model.put("template", "templates/clients/search.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -198,15 +242,9 @@ public class App {
     }, new VelocityTemplateEngine());
 
     get("/clients/:id", (request, response) -> {
-      Integer clientId = null;
-      try {
-        clientId = Integer.parseInt(request.params(":id"));
-      } catch (NumberFormatException e) {
-        System.out.println("Error: " + e.getMessage());
-      }
-      Client client;
-      if(clientId != null && Client.find(clientId) != null) {
-        model.put("client", Client.find(clientId));
+      Client client = tryFindClient(request.params(":id"));
+      if(client != null) {
+        model.put("client", client);
       }
       model.put("template", "templates/clients/view.vtl");
       return new ModelAndView(model, layout);
@@ -225,4 +263,35 @@ public class App {
     }, new VelocityTemplateEngine());
 
   }
+
+  private static Stylist tryFindStylist(String id) {
+    Integer stylistId = tryParseInt(id);
+    Stylist stylist;
+    if(stylistId != null && Stylist.find(stylistId) != null) {
+      return Stylist.find(stylistId);
+    } else {
+      return null;
+    }
+  }
+
+  private static Client tryFindClient(String id) {
+    Integer clientId = tryParseInt(id);
+    Client client;
+    if(clientId != null && Client.find(clientId) != null) {
+      return Client.find(clientId);
+    } else {
+      return null;
+    }
+  }
+
+  private static Integer tryParseInt(String toParse) {
+    Integer number = null;
+    try {
+      number = Integer.parseInt(toParse);
+    } catch (NumberFormatException e) {
+      System.out.println("Error: " + e.getMessage());
+    }
+    return number;
+  }
+
 }
