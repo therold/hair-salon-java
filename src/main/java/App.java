@@ -16,6 +16,12 @@ public class App {
 
     before((request, response) -> {
       model.clear();
+      if(activeClient != null) {
+        model.put("activeClient", activeClient);
+      }
+      if(activeStylist != null) {
+        model.put("activeStylist", activeStylist);
+      }
       String referer;
       if(request.headers("Referer") != null) {
         if(request.headers("Referer").contains("?")) {
@@ -74,14 +80,27 @@ public class App {
     }, new VelocityTemplateEngine());
 
     get("/stylists/signin", (request, response) -> {
-      //TODO
-      model.put("template", "templates/index.vtl");
+      if (request.queryParams("notfound") != null) {
+        model.put("notfound", true);
+      }
+      model.put("template", "templates/stylists/signin.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/stylists/signin", (request, response) -> {
+      String name = request.queryParams("name");
+      if (Stylist.findByName(name) == null) {
+        response.redirect("/stylists/signin?notfound");
+      } else {
+        activeStylist = Stylist.findByName(name);
+        response.redirect("/stylists/profile");
+      }
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
     get("/stylists/signout", (request, response) -> {
-      //TODO
-      model.put("template", "templates/index.vtl");
+      activeStylist = null;
+      response.redirect("/");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -135,14 +154,27 @@ public class App {
     }, new VelocityTemplateEngine());
 
     get("/clients/signin", (request, response) -> {
-      //TODO
-      model.put("template", "templates/index.vtl");
+      if (request.queryParams("notfound") != null) {
+        model.put("notfound", true);
+      }
+      model.put("template", "templates/clients/signin.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/clients/signin", (request, response) -> {
+      String name = request.queryParams("name");
+      if (Client.findByName(name) == null) {
+        response.redirect("/clients/signin?notfound");
+      } else {
+        activeClient = Client.findByName(name);
+        response.redirect("/clients/profile");
+      }
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
     get("/clients/signout", (request, response) -> {
-      //TODO
-      model.put("template", "templates/index.vtl");
+      activeClient = null;
+      response.redirect("/");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 

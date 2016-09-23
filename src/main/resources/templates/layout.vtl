@@ -22,8 +22,13 @@
               <li><a href="/clients">View all</a></li>
               <li><a href="/clients/search">Search</a></li>
               <li class="divider"></li>
-              <li><a href="/clients/signin">Sign in</a></li>
-              <li><a href="/clients/new">Create account</a></li>
+              #if ($activeClient)
+                <li><a href="/clients/profile">Profile</a></li>
+                <li><a href="/clients/signout">Sign out</a></li>
+              #else
+                <li><a href="/clients/signin">Sign in</a></li>
+                <li><a href="/clients/new">Create account</a></li>
+              #end
             </ul>
           </li>
           <li class="dropdown">
@@ -32,8 +37,13 @@
               <li><a href="/stylists">View all</a></li>
               <li><a href="/stylists/search">Search</a></li>
               <li class="divider"></li>
-              <li><a href="/stylists/signin">Sign in</a></li>
-              <li><a href="/stylists/new">Create account</a></li>
+              #if ($activeStylist)
+                <li><a href="/stylists/profile">Profile</a></li>
+                <li><a href="/stylists/signout">Sign out</a></li>
+              #else
+                <li><a href="/stylists/signin">Sign in</a></li>
+                <li><a href="/stylists/new">Create account</a></li>
+              #end
             </ul>
           </li>
           <li><a href="/owner">Owner</a></li>
