@@ -44,8 +44,8 @@ public class App {
 
     // Stylists
     get("/stylists", (request, response) -> {
-      //TODO
-      model.put("template", "templates/index.vtl");
+      model.put("stylists", Stylist.all());
+      model.put("template", "templates/stylists/view-all.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -120,8 +120,8 @@ public class App {
 
     // Clients
     get("/clients", (request, response) -> {
-      //TODO
-      model.put("template", "templates/index.vtl");
+      model.put("clients", Client.all());
+      model.put("template", "templates/clients/view-all.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -198,6 +198,10 @@ public class App {
     get("/owner", (request, response) -> {
       activeClient = null;
       activeStylist = null;
+      model.remove("activeClient");
+      model.remove("activeStylist");
+      model.put("clients", Client.all());
+      model.put("stylists", Stylist.all());
       model.put("template", "templates/owner.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());

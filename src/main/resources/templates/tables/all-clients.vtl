@@ -1,0 +1,14 @@
+<div class="panel-body">
+  <table class="table table-striped sortable-table display">
+    <thead>
+      <th>Name</th>
+    </thead>
+    <tbody>
+      #foreach ($client in $clients)
+        <tr>
+          <td>$client.getName()</td>
+        </tr>
+      #end
+    </tbody>
+  </table>
+</div>

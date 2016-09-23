@@ -1,0 +1,14 @@
+<div class="panel-body">
+  <table class="table table-striped sortable-table display">
+    <thead>
+      <th>Name</th>
+    </thead>
+    <tbody>
+      #foreach ($stylist in $stylists)
+        <tr>
+          <td>$stylist.getName()</td>
+        </tr>
+      #end
+    </tbody>
+  </table>
+</div>
