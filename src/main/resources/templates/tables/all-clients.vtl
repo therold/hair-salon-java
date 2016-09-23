@@ -2,11 +2,13 @@
   <table class="table table-striped sortable-table display">
     <thead>
       <th>Name</th>
+      <th>Profile</th>
     </thead>
     <tbody>
       #foreach ($client in $clients)
         <tr>
           <td>$client.getName()</td>
+          <td><a href="/clients/$client.getId()">View</a></td>
         </tr>
       #end
     </tbody>

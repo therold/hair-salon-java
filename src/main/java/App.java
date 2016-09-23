@@ -45,7 +45,7 @@ public class App {
     // Stylists
     get("/stylists", (request, response) -> {
       model.put("stylists", Stylist.all());
-      model.put("template", "templates/stylists/view-all.vtl");
+      model.put("template", "templates/stylists/index.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -113,15 +113,24 @@ public class App {
     }, new VelocityTemplateEngine());
 
     get("/stylists/:id", (request, response) -> {
-      //TODO
-      model.put("template", "templates/index.vtl");
+      Integer stylistId = null;
+      try {
+        stylistId = Integer.parseInt(request.params(":id"));
+      } catch (NumberFormatException e) {
+        System.out.println("Error: " + e.getMessage());
+      }
+      Stylist stylist;
+      if(stylistId != null && Stylist.find(stylistId) != null) {
+        model.put("stylist", Stylist.find(stylistId));
+      }
+      model.put("template", "templates/stylists/view.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
     // Clients
     get("/clients", (request, response) -> {
       model.put("clients", Client.all());
-      model.put("template", "templates/clients/view-all.vtl");
+      model.put("template", "templates/clients/index.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -189,8 +198,17 @@ public class App {
     }, new VelocityTemplateEngine());
 
     get("/clients/:id", (request, response) -> {
-      //TODO
-      model.put("template", "templates/index.vtl");
+      Integer clientId = null;
+      try {
+        clientId = Integer.parseInt(request.params(":id"));
+      } catch (NumberFormatException e) {
+        System.out.println("Error: " + e.getMessage());
+      }
+      Client client;
+      if(clientId != null && Client.find(clientId) != null) {
+        model.put("client", Client.find(clientId));
+      }
+      model.put("template", "templates/clients/view.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 

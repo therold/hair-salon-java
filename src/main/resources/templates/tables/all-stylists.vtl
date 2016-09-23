@@ -2,11 +2,13 @@
   <table class="table table-striped sortable-table display">
     <thead>
       <th>Name</th>
+      <th>Profile</th>
     </thead>
     <tbody>
       #foreach ($stylist in $stylists)
         <tr>
           <td>$stylist.getName()</td>
+          <td><a href="/stylists/$stylist.getId()">View</a></td>
         </tr>
       #end
     </tbody>
