@@ -52,7 +52,7 @@ public class Stylist {
 
   public static Stylist find(int id) {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "SELECT id, name FROM stylists WHERE id = :id;";
+      String sql = "SELECT * FROM stylists WHERE id = :id;";
       Stylist stylist = con.createQuery(sql)
         .addParameter("id", id)
         .executeAndFetchFirst(Stylist.class);
@@ -62,7 +62,7 @@ public class Stylist {
 
   public static Stylist findByName(String name) {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "SELECT id, name FROM stylists WHERE name = :name;";
+      String sql = "SELECT * FROM stylists WHERE name = :name;";
       Stylist stylist = con.createQuery(sql)
         .addParameter("name", name)
         .executeAndFetchFirst(Stylist.class);
@@ -71,7 +71,7 @@ public class Stylist {
   }
 
   public static List<Stylist> all() {
-    String sql = "SELECT id, name FROM stylists;";
+    String sql = "SELECT * FROM stylists;";
     try(Connection con = DB.sql2o.open()) {
       return con.createQuery(sql).executeAndFetch(Stylist.class);
     }
