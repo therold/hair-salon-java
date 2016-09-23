@@ -6,15 +6,21 @@
 
 ## Description
 
-_This application is designed to ask the user a series of questions. Once the user specifies the size and scope of their event, the application will calculate that event's total cost. The total cost is determined by an arbitrary formula._
+_This application is designed to support a hair salon. It allows the employees of the hair salon to add and remove clients, and associate those clients with individual stylists._
 
 ## Setup/Installation Requirements
 
-_Download Java and build source code from [GitHub](https://github.com/therold/hair-salon-java)._
-* _$ git clone https://github.com/therold/hair-salon-java.git_
-* _$ cd event-planner_
-* _$ gradle run_
-* _Then open [http://localhost:4567](http://localhost:4567) in your preferred web browser._
+_Create the database and tables in PSQL:_
+* _CREATE DATABASE hair_salon;_
+* _CREATE TABLE stylists (id serial PRIMARY KEY, name varchar);_
+* _CREATE TABLE clients (id serial PRIMARY KEY, name varchar, stylistId int);_
+
+_Download Java and build source code from [GitHub](https://github.com/therold/hair-salon-java) in the terminal._
+* _git clone https://github.com/therold/hair-salon-java.git_
+* _cd hair-salon-java_
+* _gradle run_
+
+_Then open [http://localhost:4567](http://localhost:4567) in your preferred web browser._
 
 ## User Stories
 * _As a salon employee, I need to be able to see a list of all our stylists._
