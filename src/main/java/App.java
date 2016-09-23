@@ -5,9 +5,27 @@ import spark.template.velocity.VelocityTemplateEngine;
 import static spark.Spark.*;
 
 public class App {
+  private static Client activeClient;
+  private static Stylist activeStylist;
+
   public static void main(String[] args) {
     staticFileLocation("/public");
     String layout = "templates/layout.vtl";
+
+    before((request, response) -> {
+      String referer;
+      if(request.headers("Referer") != null) {
+        if(request.headers("Referer").contains("?")) {
+          referer = request.headers("Referer").substring(0, request.headers("Referer").indexOf('?'));
+        } else {
+          referer = request.headers("Referer");
+        }
+        if(request.requestMethod().equals("GET") && !referer.equals(request.session().attribute("Current"))) {
+          request.session().attribute("Prev", request.session().attribute("Current"));
+          request.session().attribute("Current", referer);
+        }
+      }
+    });
 
     // Home
     get("/", (request, response) -> {
@@ -59,6 +77,13 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
+    get("/stylists/signout", (request, response) -> {
+      //TODO
+      Map<String, Object> model = new HashMap<String, Object>();
+      model.put("template", "templates/index.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
     // Clients
     get("/clients", (request, response) -> {
       //TODO
@@ -67,24 +92,23 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
-    get("/clients/:id", (request, response) -> {
-      //TODO
-      Map<String, Object> model = new HashMap<String, Object>();
-      model.put("template", "templates/index.vtl");
-      return new ModelAndView(model, layout);
-    }, new VelocityTemplateEngine());
-
     get("/clients/new", (request, response) -> {
-      //TODO
       Map<String, Object> model = new HashMap<String, Object>();
-      model.put("template", "templates/index.vtl");
+      model.put("template", "templates/clients/create-account.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
     post("/clients", (request, response) -> {
-      //TODO
       Map<String, Object> model = new HashMap<String, Object>();
-      model.put("template", "templates/index.vtl");
+      String name = request.queryParams("name");
+      if (Client.findByName(name) != null) {
+        response.redirect(request.session().attribute("Current") + "?clientexists=true");
+      } else {
+        Client client = new Client(name);
+        client.save();
+        activeClient = client;
+        response.redirect(request.session().attribute("Prev"));
+      }
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -96,6 +120,20 @@ public class App {
     }, new VelocityTemplateEngine());
 
     get("/clients/signin", (request, response) -> {
+      //TODO
+      Map<String, Object> model = new HashMap<String, Object>();
+      model.put("template", "templates/index.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    get("/clients/signout", (request, response) -> {
+      //TODO
+      Map<String, Object> model = new HashMap<String, Object>();
+      model.put("template", "templates/index.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    get("/clients/:id", (request, response) -> {
       //TODO
       Map<String, Object> model = new HashMap<String, Object>();
       model.put("template", "templates/index.vtl");
