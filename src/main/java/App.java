@@ -42,24 +42,26 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
-    get("/stylists/:id", (request, response) -> {
-      //TODO
-      Map<String, Object> model = new HashMap<String, Object>();
-      model.put("template", "templates/index.vtl");
-      return new ModelAndView(model, layout);
-    }, new VelocityTemplateEngine());
-
     get("/stylists/new", (request, response) -> {
       //TODO
       Map<String, Object> model = new HashMap<String, Object>();
-      model.put("template", "templates/index.vtl");
+      model.put("template", "templates/stylists/new.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
     post("/stylists", (request, response) -> {
       //TODO
       Map<String, Object> model = new HashMap<String, Object>();
-      model.put("template", "templates/index.vtl");
+      String name = request.queryParams("name");
+      if (Stylist.findByName(name) != null) {
+        response.redirect(request.session().attribute("Current") + "?stylistexists=true");
+      } else {
+        Stylist stylist = new Stylist(name);
+        stylist.save();
+        activeClient = null;
+        activeStylist = stylist;
+        response.redirect(request.session().attribute("Prev"));
+      }
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -84,6 +86,13 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
+    get("/stylists/:id", (request, response) -> {
+      //TODO
+      Map<String, Object> model = new HashMap<String, Object>();
+      model.put("template", "templates/index.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
     // Clients
     get("/clients", (request, response) -> {
       //TODO
@@ -94,7 +103,7 @@ public class App {
 
     get("/clients/new", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
-      model.put("template", "templates/clients/create-account.vtl");
+      model.put("template", "templates/clients/new.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -106,6 +115,7 @@ public class App {
       } else {
         Client client = new Client(name);
         client.save();
+        activeStylist = null;
         activeClient = client;
         response.redirect(request.session().attribute("Prev"));
       }

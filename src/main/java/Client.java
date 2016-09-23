@@ -4,10 +4,11 @@ import org.sql2o.*;
 public class Client {
   private int id;
   private String name;
-  private int stylistId;
+  private Integer stylistId;
 
   public Client(String name) {
     this.name = name;
+    this.stylistId = null;
   }
 
   public int getId() {
@@ -22,11 +23,11 @@ public class Client {
     this.name = name;
   }
 
-  public int getStylistId() {
+  public Integer getStylistId() {
     return this.stylistId;
   }
 
-  public void setStylistId(int stylistId) {
+  public void setStylistId(Integer stylistId) {
     this.stylistId = stylistId;
   }
 
