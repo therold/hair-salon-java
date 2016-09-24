@@ -15,9 +15,9 @@ public class ClientTest {
   }
 
   @Test
-  public void client_instantiatesWithName_Test() {
+  public void client_instantiatesWithUserame_Test() {
     Client testClient = new Client("Test");
-    assertEquals("Test", testClient.getName());
+    assertEquals("Test", testClient.getUsername());
   }
 
   @Test
@@ -27,23 +27,26 @@ public class ClientTest {
   }
 
   @Test
-  public void client_instantiatesWithoutStylistId_0() {
+  public void client_instantiatesWithoutStylistId_null() {
     Client testClient = new Client("Test");
-    assertEquals(0, testClient.getStylistId());
+    Integer expected = null;
+    assertEquals(expected, testClient.getStylistId());
   }
 
   @Test
-  public void setName_setsTheName_newName() {
+  public void setUsername_setsTheName_newUsername() {
     Client testClient = new Client("Test");
-    testClient.setName("newName");
-    assertEquals("newName", testClient.getName());
+    testClient.setUsername("newName");
+    assertEquals("newName", testClient.getUsername());
   }
 
   @Test
   public void setStylistId_setsTheStylistId_1() {
     Client testClient = new Client("Test");
-    testClient.setStylistId(1);
-    assertEquals(1, testClient.getStylistId());
+    Stylist testStylist = new Stylist("Test");
+    testStylist.save();
+    testClient.setStylistId(testStylist.getId());
+    assertEquals((Integer)testStylist.getId(), testClient.getStylistId());
   }
 
   @Test
@@ -61,20 +64,22 @@ public class ClientTest {
   }
 
   @Test
-  public void save_savesName_test() {
+  public void save_savesUsername_test() {
     Client testClient = new Client("Test");
     testClient.save();
     Client savedClient = Client.find(testClient.getId());
-    assertEquals("Test", savedClient.getName());
+    assertEquals("Test", savedClient.getUsername());
   }
 
   @Test
   public void save_savesStylistId_1() {
     Client testClient = new Client("Test");
-    testClient.setStylistId(1);
+    Stylist testStylist = new Stylist("Test");
+    testStylist.save();
+    testClient.setStylistId(testStylist.getId());
     testClient.save();
     Client savedClient = Client.find(testClient.getId());
-    assertEquals(1, savedClient.getStylistId());
+    assertEquals((Integer)testStylist.getId(), savedClient.getStylistId());
   }
 
   @Test
@@ -113,46 +118,54 @@ public class ClientTest {
   }
 
   @Test
-  public void findByName_returnsClientWithSameName_secondClient() {
+  public void findByUsername_returnsClientWithSameName_secondClient() {
     Client testClient = new Client("Test");
     testClient.save();
     Client secondClient = new Client("Second");
     secondClient.save();
-    assertEquals(secondClient, Client.findByName("Second"));
+    assertEquals(secondClient, Client.findByUsername("Second"));
   }
 
   @Test
-  public void findByName_returnsNothingForUnknownName_null() {
+  public void findByUsername_returnsNothingForUnknownName_null() {
     Client testClient = new Client("Test");
     testClient.save();
-    assertEquals(null, Client.findByName("NotATest"));
+    assertEquals(null, Client.findByUsername("NotATest"));
   }
 
   @Test
   public void withStylistId_returnsClientsWithSameStylistId_listOfClients() {
+    Stylist firstStylist = new Stylist("Test");
+    firstStylist.save();
+    Stylist secondStylist = new Stylist("Second");
+    secondStylist.save();
     Client firstClient = new Client("Test");
-    firstClient.setStylistId(1);
+    firstClient.setStylistId(firstStylist.getId());
     firstClient.save();
     Client secondClient = new Client("Second");
-    secondClient.setStylistId(2);
+    secondClient.setStylistId(secondStylist.getId());
     secondClient.save();
-    Client thirdClient = new Client("Second");
-    thirdClient.setStylistId(2);
+    Client thirdClient = new Client("Third");
+    thirdClient.setStylistId(secondStylist.getId());
     thirdClient.save();
-    assertEquals(false, Client.withStylistId(2).contains(firstClient));
-    assertEquals(true, Client.withStylistId(2).contains(secondClient));
-    assertEquals(true, Client.withStylistId(2).contains(thirdClient));
+    assertEquals(false, Client.withStylistId(secondStylist.getId()).contains(firstClient));
+    assertEquals(true, Client.withStylistId(secondStylist.getId()).contains(secondClient));
+    assertEquals(true, Client.withStylistId(secondStylist.getId()).contains(thirdClient));
   }
 
   @Test
   public void withStylistId_returnsNothingForUnknownStylistId_0() {
     Client firstClient = new Client("Test");
-    firstClient.setStylistId(1);
+    Stylist firstStylist = new Stylist("Test");
+    firstStylist.save();
+    firstClient.setStylistId(firstStylist.getId());
     firstClient.save();
-    Client secondClient = new Client("Test");
-    secondClient.setStylistId(2);
+    Client secondClient = new Client("Second");
+    Stylist secondStylist = new Stylist("Second");
+    secondStylist.save();
+    secondClient.setStylistId(secondStylist.getId());
     secondClient.save();
-    assertEquals(0, Client.withStylistId(3).size());
+    assertEquals(0, Client.withStylistId(-1).size());
   }
 
   @Test
@@ -181,7 +194,7 @@ public class ClientTest {
   public void update_preservesOriginalId_true() {
     Client testClient = new Client("Test");
     testClient.save();
-    testClient.setName("newName");
+    testClient.setUsername("newName");
     testClient.update();
     Client savedClient = Client.find(testClient.getId());
     assertEquals(testClient.getId(), savedClient.getId());
@@ -193,38 +206,44 @@ public class ClientTest {
     testClient.save();
     testClient.update();
     Client savedClient = Client.find(testClient.getId());
-    assertEquals("Test", savedClient.getName());
+    assertEquals("Test", savedClient.getUsername());
   }
 
   @Test
   public void update_savesNewName_newName() {
     Client testClient = new Client("Test");
     testClient.save();
-    testClient.setName("newName");
+    testClient.setUsername("newName");
     testClient.update();
     Client savedClient = Client.find(testClient.getId());
-    assertEquals("newName", savedClient.getName());
+    assertEquals("newName", savedClient.getUsername());
   }
 
   @Test
   public void update_preservesOriginalStylistId_1() {
     Client testClient = new Client("Test");
-    testClient.setStylistId(1);
+    Stylist testStylist = new Stylist("Test");
+    testStylist.save();
+    testClient.setStylistId(testStylist.getId());
     testClient.save();
     testClient.update();
     Client savedClient = Client.find(testClient.getId());
-    assertEquals(1, savedClient.getStylistId());
+    assertEquals((Integer)testStylist.getId(), savedClient.getStylistId());
   }
 
   @Test
   public void update_savesNewStylistId_2() {
     Client testClient = new Client("Test");
-    testClient.setStylistId(1);
+    Stylist testStylist = new Stylist("Test");
+    testStylist.save();
+    testClient.setStylistId(testStylist.getId());
     testClient.save();
-    testClient.setStylistId(2);
+    Stylist secondStylist = new Stylist("Second");
+    secondStylist.save();
+    testClient.setStylistId(secondStylist.getId());
     testClient.update();
     Client savedClient = Client.find(testClient.getId());
-    assertEquals(2, savedClient.getStylistId());
+    assertEquals((Integer)secondStylist.getId(), savedClient.getStylistId());
   }
 
   @Test
@@ -236,9 +255,8 @@ public class ClientTest {
   }
 
   @Test
-  public void equals_returnsTrueIfNamesAndIdsAndStylistIdAreEqual_true() {
+  public void equals_returnsTrueIfNamesAndIdsAreEqual_true() {
     Client testClient = new Client("Test");
-    testClient.setStylistId(1);
     testClient.save();
     Client firstClient = Client.find(testClient.getId());
     Client secondClient = Client.find(testClient.getId());

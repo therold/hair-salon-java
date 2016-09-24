@@ -13,6 +13,12 @@ public class App {
     staticFileLocation("/public");
     String layout = "templates/layout.vtl";
     model = new HashMap<String, Object>();
+    Stylist testStylist = new Stylist("Test");
+    testStylist.save();
+    Client testClient = new Client("Test");
+    testClient.setStylistId(testStylist.getId());
+    testClient.save();
+    System.out.println(Client.withStylistId(testStylist.getId()).contains(testClient));
 
     before((request, response) -> {
       model.clear();
@@ -129,7 +135,7 @@ public class App {
 
     post("/stylists", (request, response) -> {
       String name = request.queryParams("name");
-      if (Stylist.findByName(name) != null) {
+      if (Stylist.findByUsername(name) != null) {
         response.redirect(request.session().attribute("Current") + "?stylistexists=true");
       } else {
         Stylist stylist = new Stylist(name);
@@ -144,7 +150,7 @@ public class App {
     post("/stylists/edit", (request, response) -> {
       Stylist stylist = tryFindStylist(request.queryParams("stylistId"));
       if(stylist != null) {
-        stylist.setName(request.queryParams("name"));
+        stylist.setUsername(request.queryParams("name"));
         stylist.update();
         response.redirect(request.session().attribute("Prev"));
       }
@@ -176,10 +182,10 @@ public class App {
 
     post("/stylists/signin", (request, response) -> {
       String name = request.queryParams("name");
-      if (Stylist.findByName(name) == null) {
+      if (Stylist.findByUsername(name) == null) {
         response.redirect("/stylists/signin?notfound");
       } else {
-        activeStylist = Stylist.findByName(name);
+        activeStylist = Stylist.findByUsername(name);
         response.redirect("/stylists/profile");
       }
       return new ModelAndView(model, layout);
@@ -265,7 +271,7 @@ public class App {
 
     post("/clients", (request, response) -> {
       String name = request.queryParams("name");
-      if (Client.findByName(name) != null) {
+      if (Client.findByUsername(name) != null) {
         response.redirect(request.session().attribute("Current") + "?clientexists=true");
       } else {
         Client client = new Client(name);
@@ -280,7 +286,7 @@ public class App {
     post("/clients/edit", (request, response) -> {
       Client client = tryFindClient(request.queryParams("clientId"));
       if(client != null) {
-        client.setName(request.queryParams("name"));
+        client.setUsername(request.queryParams("name"));
         client.update();
         response.redirect(request.session().attribute("Prev"));
       }
@@ -301,10 +307,10 @@ public class App {
 
     post("/clients/signin", (request, response) -> {
       String name = request.queryParams("name");
-      if (Client.findByName(name) == null) {
+      if (Client.findByUsername(name) == null) {
         response.redirect("/clients/signin?notfound");
       } else {
-        activeClient = Client.findByName(name);
+        activeClient = Client.findByUsername(name);
         response.redirect("/clients/profile");
       }
       return new ModelAndView(model, layout);

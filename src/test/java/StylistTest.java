@@ -15,7 +15,7 @@ public class StylistTest {
   @Test
   public void stylist_instantiatesWithName_Test() {
     Stylist testStylist = new Stylist("Test");
-    assertEquals("Test", testStylist.getName());
+    assertEquals("Test", testStylist.getUsername());
   }
 
   @Test
@@ -25,10 +25,10 @@ public class StylistTest {
   }
 
   @Test
-  public void setName_setsTheName_newName() {
+  public void setUsername_setsTheName_newName() {
     Stylist testStylist = new Stylist("Test");
-    testStylist.setName("newName");
-    assertEquals("newName", testStylist.getName());
+    testStylist.setUsername("newName");
+    assertEquals("newName", testStylist.getUsername());
   }
 
   @Test
@@ -59,7 +59,7 @@ public class StylistTest {
     Stylist testStylist = new Stylist("Test");
     testStylist.save();
     Stylist savedStylist = Stylist.find(testStylist.getId());
-    assertEquals("Test", savedStylist.getName());
+    assertEquals("Test", savedStylist.getUsername());
   }
 
   @Test
@@ -89,19 +89,19 @@ public class StylistTest {
   }
 
   @Test
-  public void findByName_returnsStylistWithSameName_secondStylist() {
+  public void findByUsername_returnsStylistWithSameName_secondStylist() {
     Stylist testStylist = new Stylist("Test");
     testStylist.save();
     Stylist secondStylist = new Stylist("Second");
     secondStylist.save();
-    assertEquals(secondStylist, Stylist.findByName("Second"));
+    assertEquals(secondStylist, Stylist.findByUsername("Second"));
   }
 
   @Test
-  public void findByName_returnsNothingForUnknownName_null() {
+  public void findByUsername_returnsNothingForUnknownName_null() {
     Stylist testStylist = new Stylist("Test");
     testStylist.save();
-    assertEquals(null, Stylist.findByName("NotATest"));
+    assertEquals(null, Stylist.findByUsername("NotATest"));
   }
 
   @Test
@@ -130,10 +130,10 @@ public class StylistTest {
   public void update_savesNewName_newName() {
     Stylist testStylist = new Stylist("Test");
     testStylist.save();
-    testStylist.setName("newName");
+    testStylist.setUsername("newName");
     testStylist.update();
     Stylist savedStylist = Stylist.find(testStylist.getId());
-    assertEquals("newName", savedStylist.getName());
+    assertEquals("newName", savedStylist.getUsername());
   }
 
   @Test
@@ -142,14 +142,14 @@ public class StylistTest {
     testStylist.save();
     testStylist.update();
     Stylist savedStylist = Stylist.find(testStylist.getId());
-    assertEquals("Test", savedStylist.getName());
+    assertEquals("Test", savedStylist.getUsername());
   }
 
   @Test
   public void update_preservesOriginalId_true() {
     Stylist testStylist = new Stylist("Test");
     testStylist.save();
-    testStylist.setName("newName");
+    testStylist.setUsername("newName");
     testStylist.update();
     Stylist savedStylist = Stylist.find(testStylist.getId());
     assertEquals(testStylist.getId(), savedStylist.getId());

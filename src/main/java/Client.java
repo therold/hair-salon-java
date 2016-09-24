@@ -3,11 +3,11 @@ import org.sql2o.*;
 
 public class Client {
   private int id;
-  private String name;
+  private String username;
   private Integer stylistId;
 
-  public Client(String name) {
-    this.name = name;
+  public Client(String username) {
+    this.username = username;
     this.stylistId = null;
   }
 
@@ -15,12 +15,12 @@ public class Client {
     return this.id;
   }
 
-  public String getName() {
-    return this.name;
+  public String getUsername() {
+    return this.username;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setUsername(String username) {
+    this.username = username;
   }
 
   public Integer getStylistId() {
@@ -33,9 +33,9 @@ public class Client {
 
   public void save() {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "INSERT INTO clients (name, stylistId) VALUES (:name, :stylistId);";
+      String sql = "INSERT INTO clients (username, stylistId) VALUES (:username, :stylistId);";
       this.id = (int) con.createQuery(sql, true)
-        .addParameter("name", this.name)
+        .addParameter("username", this.username)
         .addParameter("stylistId", this.stylistId)
         .executeUpdate()
         .getKey();
@@ -44,9 +44,9 @@ public class Client {
 
   public void update() {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "UPDATE clients SET name = :name, stylistId = :stylistId WHERE id = :id;";
+      String sql = "UPDATE clients SET username = :username, stylistId = :stylistId WHERE id = :id;";
       con.createQuery(sql)
-        .addParameter("name", this.name)
+        .addParameter("username", this.username)
         .addParameter("stylistId", this.stylistId)
         .addParameter("id", this.id)
         .executeUpdate();
@@ -72,11 +72,11 @@ public class Client {
     }
   }
 
-  public static Client findByName(String name) {
+  public static Client findByUsername(String username) {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "SELECT * FROM clients WHERE name = :name;";
+      String sql = "SELECT * FROM clients WHERE username = :username;";
       Client client = con.createQuery(sql)
-        .addParameter("name", name)
+        .addParameter("username", username)
         .executeAndFetchFirst(Client.class);
       return client;
     }
@@ -92,7 +92,7 @@ public class Client {
   }
 
   public static List<Client> search(String search) {
-    String sql = "SELECT * FROM clients WHERE name ~* :search;";
+    String sql = "SELECT * FROM clients WHERE username ~* :search;";
     try(Connection con = DB.sql2o.open()) {
       return con.createQuery(sql)
         .addParameter("search", ".*" + search + ".*")
@@ -113,7 +113,7 @@ public class Client {
         return false;
       } else {
         Client otherClient = (Client) other;
-        return this.getName().equals(otherClient.getName()) &&
+        return this.getUsername().equals(otherClient.getUsername()) &&
           this.getStylistId() == otherClient.getStylistId() &&
           this.getId() == otherClient.getId();
       }

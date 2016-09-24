@@ -3,29 +3,29 @@ import org.sql2o.*;
 
 public class Stylist {
   private int id;
-  private String name;
+  private String username;
 
-  public Stylist(String name) {
-    this.name = name;
+  public Stylist(String username) {
+    this.username = username;
   }
 
   public int getId() {
     return this.id;
   }
 
-  public String getName() {
-    return this.name;
+  public String getUsername() {
+    return this.username;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setUsername(String username) {
+    this.username = username;
   }
 
   public void save() {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "INSERT INTO stylists (name) VALUES (:name);";
+      String sql = "INSERT INTO stylists (username) VALUES (:username);";
       this.id = (int) con.createQuery(sql, true)
-        .addParameter("name", this.name)
+        .addParameter("username", this.username)
         .executeUpdate()
         .getKey();
     }
@@ -33,9 +33,9 @@ public class Stylist {
 
   public void update() {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "UPDATE stylists SET name = :name WHERE id = :id;";
+      String sql = "UPDATE stylists SET username = :username WHERE id = :id;";
       con.createQuery(sql)
-        .addParameter("name", this.name)
+        .addParameter("username", this.username)
         .addParameter("id", this.id)
         .executeUpdate();
     }
@@ -60,18 +60,18 @@ public class Stylist {
     }
   }
 
-  public static Stylist findByName(String name) {
+  public static Stylist findByUsername(String username) {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "SELECT * FROM stylists WHERE name = :name;";
+      String sql = "SELECT * FROM stylists WHERE username = :username;";
       Stylist stylist = con.createQuery(sql)
-        .addParameter("name", name)
+        .addParameter("username", username)
         .executeAndFetchFirst(Stylist.class);
       return stylist;
     }
   }
 
   public static List<Stylist> search(String search) {
-    String sql = "SELECT * FROM stylists WHERE name ~* :search;";
+    String sql = "SELECT * FROM stylists WHERE username ~* :search;";
     try(Connection con = DB.sql2o.open()) {
       return con.createQuery(sql)
         .addParameter("search", ".*" + search + ".*")
@@ -92,7 +92,7 @@ public class Stylist {
         return false;
       } else {
         Stylist otherStylist = (Stylist) other;
-        return this.getName().equals(otherStylist.getName()) &&
+        return this.getUsername().equals(otherStylist.getUsername()) &&
           this.getId() == otherStylist.getId();
       }
     }
