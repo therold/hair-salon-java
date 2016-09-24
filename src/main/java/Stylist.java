@@ -3,24 +3,28 @@ import org.sql2o.*;
 
 public class Stylist {
   private int id;
-  private String username;
+  private String userName;
   private String firstName;
   private String lastName;
+  private String specialty;
 
-  public Stylist(String username) {
-    this.username = username;
+  public Stylist(String userName, String firstName, String lastName, String specialty) {
+    this.userName = userName;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.specialty = specialty;
   }
 
   public int getId() {
     return this.id;
   }
 
-  public String getUsername() {
-    return this.username;
+  public String getUserName() {
+    return this.userName;
   }
 
-  public void setUsername(String username) {
-    this.username = username;
+  public void setUserName(String userName) {
+    this.userName = userName;
   }
 
   public String getFirstName() {
@@ -31,12 +35,20 @@ public class Stylist {
     this.firstName = firstName;
   }
 
-  public String getLastLast() {
+  public String getLastName() {
     return this.lastName;
   }
 
   public void setLastName(String lastName) {
     this.lastName = lastName;
+  }
+
+  public String getSpecialty() {
+    return this.specialty;
+  }
+
+  public void setSpecialty(String specialty) {
+    this.specialty = specialty;
   }
 
   public String getFullName() {
@@ -45,9 +57,12 @@ public class Stylist {
 
   public void save() {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "INSERT INTO stylists (username) VALUES (:username);";
+      String sql = "INSERT INTO stylists (username, firstname, lastname, specialty) VALUES (:username, :firstname, :lastname, :specialty);";
       this.id = (int) con.createQuery(sql, true)
-        .addParameter("username", this.username)
+        .addParameter("username", this.userName)
+        .addParameter("firstname", this.firstName)
+        .addParameter("lastname", this.lastName)
+        .addParameter("specialty", this.specialty)
         .executeUpdate()
         .getKey();
     }
@@ -55,9 +70,12 @@ public class Stylist {
 
   public void update() {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "UPDATE stylists SET username = :username WHERE id = :id;";
+      String sql = "UPDATE stylists SET username = :username, firstname = :firstname, lastname = :lastname, specialty = :specialty WHERE id = :id;";
       con.createQuery(sql)
-        .addParameter("username", this.username)
+        .addParameter("username", this.userName)
+        .addParameter("firstname", this.firstName)
+        .addParameter("lastname", this.lastName)
+        .addParameter("specialty", this.specialty)
         .addParameter("id", this.id)
         .executeUpdate();
     }
@@ -82,18 +100,18 @@ public class Stylist {
     }
   }
 
-  public static Stylist findByUsername(String username) {
+  public static Stylist findByUserName(String userName) {
     try(Connection con = DB.sql2o.open()) {
       String sql = "SELECT * FROM stylists WHERE username = :username;";
       Stylist stylist = con.createQuery(sql)
-        .addParameter("username", username)
+        .addParameter("username", userName)
         .executeAndFetchFirst(Stylist.class);
       return stylist;
     }
   }
 
   public static List<Stylist> search(String search) {
-    String sql = "SELECT * FROM stylists WHERE username ~* :search;";
+    String sql = "SELECT * FROM stylists WHERE username ~* :search OR firstname ~* :search OR lastname ~* :search OR specialty ~* :search;";
     try(Connection con = DB.sql2o.open()) {
       return con.createQuery(sql)
         .addParameter("search", ".*" + search + ".*")
@@ -114,7 +132,7 @@ public class Stylist {
         return false;
       } else {
         Stylist otherStylist = (Stylist) other;
-        return this.getUsername().equals(otherStylist.getUsername()) &&
+        return this.getUserName().equals(otherStylist.getUserName()) &&
           this.getId() == otherStylist.getId();
       }
     }

@@ -55,7 +55,7 @@ public class ClientTest {
   @Test
   public void setStylistId_setsTheStylistId_1() {
     Client testClient = new Client("Test", "Bob", "deTester");
-    Stylist testStylist = new Stylist("Test");
+    Stylist testStylist = new Stylist("Test", "Bob", "deTester", "Hair");
     testStylist.save();
     testClient.setStylistId(testStylist.getId());
     assertEquals((Integer)testStylist.getId(), testClient.getStylistId());
@@ -100,7 +100,7 @@ public class ClientTest {
   @Test
   public void save_savesStylistId_1() {
     Client testClient = new Client("Test", "Bob", "deTester");
-    Stylist testStylist = new Stylist("Test");
+    Stylist testStylist = new Stylist("Test", "Bob", "deTester", "Hair");
     testStylist.save();
     testClient.setStylistId(testStylist.getId());
     testClient.save();
@@ -161,9 +161,9 @@ public class ClientTest {
 
   @Test
   public void withStylistId_returnsClientsWithSameStylistId_listOfClients() {
-    Stylist firstStylist = new Stylist("Test");
+    Stylist firstStylist = new Stylist("Test", "Bob", "deTester", "Hair");
     firstStylist.save();
-    Stylist secondStylist = new Stylist("Second");
+    Stylist secondStylist = new Stylist("Second", "Tom", "laTest", "Hair");
     secondStylist.save();
     Client firstClient = new Client("Test", "Bob", "deTester");
     firstClient.setStylistId(firstStylist.getId());
@@ -182,12 +182,12 @@ public class ClientTest {
   @Test
   public void withStylistId_returnsNothingForUnknownStylistId_0() {
     Client firstClient = new Client("Test", "Bob", "deTester");
-    Stylist firstStylist = new Stylist("Test");
+    Stylist firstStylist = new Stylist("Test", "Bob", "deTester", "Hair");
     firstStylist.save();
     firstClient.setStylistId(firstStylist.getId());
     firstClient.save();
     Client secondClient = new Client("Second", "Tom", "laTest");
-    Stylist secondStylist = new Stylist("Second");
+    Stylist secondStylist = new Stylist("Second", "Tom", "laTest", "Hair");
     secondStylist.save();
     secondClient.setStylistId(secondStylist.getId());
     secondClient.save();
@@ -248,7 +248,7 @@ public class ClientTest {
   @Test
   public void update_preservesOriginalStylistId_1() {
     Client testClient = new Client("Test", "Bob", "deTester");
-    Stylist testStylist = new Stylist("Test");
+    Stylist testStylist = new Stylist("Test", "Bob", "deTester", "Hair");
     testStylist.save();
     testClient.setStylistId(testStylist.getId());
     testClient.save();
@@ -260,11 +260,11 @@ public class ClientTest {
   @Test
   public void update_savesNewStylistId_2() {
     Client testClient = new Client("Test", "Bob", "deTester");
-    Stylist testStylist = new Stylist("Test");
+    Stylist testStylist = new Stylist("Test", "Bob", "deTester", "Hair");
     testStylist.save();
     testClient.setStylistId(testStylist.getId());
     testClient.save();
-    Stylist secondStylist = new Stylist("Second");
+    Stylist secondStylist = new Stylist("Second", "Tom", "laTest", "Hair");
     secondStylist.save();
     testClient.setStylistId(secondStylist.getId());
     testClient.update();

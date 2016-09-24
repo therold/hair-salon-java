@@ -128,11 +128,14 @@ public class App {
     }, new VelocityTemplateEngine());
 
     post("/stylists", (request, response) -> {
-      String name = request.queryParams("name");
-      if (Stylist.findByUsername(name) != null) {
+      String userName = request.queryParams("userName");
+      if (Stylist.findByUserName(userName) != null) {
         response.redirect(request.session().attribute("Current") + "?stylistexists=true");
       } else {
-        Stylist stylist = new Stylist(name);
+        String firstName = request.queryParams("firstName");
+        String lastName = request.queryParams("lastName");
+        String specialty = request.queryParams("specialty");
+        Stylist stylist = new Stylist(userName, firstName, lastName, specialty);
         stylist.save();
         activeClient = null;
         activeStylist = stylist;
@@ -144,7 +147,7 @@ public class App {
     post("/stylists/edit", (request, response) -> {
       Stylist stylist = tryFindStylist(request.queryParams("stylistId"));
       if(stylist != null) {
-        stylist.setUsername(request.queryParams("name"));
+        stylist.setUserName(request.queryParams("name"));
         stylist.update();
         response.redirect(request.session().attribute("Prev"));
       }
@@ -176,10 +179,10 @@ public class App {
 
     post("/stylists/signin", (request, response) -> {
       String name = request.queryParams("name");
-      if (Stylist.findByUsername(name) == null) {
+      if (Stylist.findByUserName(name) == null) {
         response.redirect("/stylists/signin?notfound");
       } else {
-        activeStylist = Stylist.findByUsername(name);
+        activeStylist = Stylist.findByUserName(name);
         response.redirect("/stylists/profile");
       }
       return new ModelAndView(model, layout);

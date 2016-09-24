@@ -12,7 +12,7 @@ _This application is designed to support a hair salon. It allows the employees o
 
 _Create the database and tables in PSQL:_
 * _CREATE DATABASE hair_salon;_
-* _CREATE TABLE stylists (id serial PRIMARY KEY, username varchar NOT NULL UNIQUE);_
+* _CREATE TABLE stylists (id serial PRIMARY KEY, username varchar NOT NULL UNIQUE, firstname varchar NOT NULL, lastname varchar NOT NULL, specialty varchar NOT NULL);_
 * _CREATE TABLE clients (id serial PRIMARY KEY, username varchar NOT NULL UNIQUE, firstname varchar NOT NULL, lastname varchar NOT NULL, stylistId int REFERENCES stylists (id) ON DELETE SET NULL);_
 
 _Download Java and build source code from [GitHub](https://github.com/therold/hair-salon-java) in the terminal._
