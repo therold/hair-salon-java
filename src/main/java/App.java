@@ -89,6 +89,13 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
+    get("/stylists/assign", (request, response) -> {
+      model.put("clients", Client.all());
+      model.put("stylists", Stylist.all());
+      model.put("template", "templates/stylists/assign.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
     get("/stylists/signin", (request, response) -> {
       if (request.queryParams("notfound") != null) {
         model.put("notfound", true);
@@ -139,6 +146,17 @@ public class App {
       if(stylist != null) {
         stylist.setName(request.queryParams("name"));
         stylist.update();
+        response.redirect(request.session().attribute("Prev"));
+      }
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/stylists/assign", (request, response) -> {
+      Stylist stylist = tryFindStylist(request.queryParams("stylistId"));
+      Client client = tryFindClient(request.queryParams("clientId"));
+      if(stylist != null && client != null) {
+        client.setStylistId(stylist.getId());
+        client.update();
         response.redirect(request.session().attribute("Prev"));
       }
       return new ModelAndView(model, layout);
