@@ -59,17 +59,14 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
-    post("/stylists", (request, response) -> {
-      String name = request.queryParams("name");
-      if (Stylist.findByName(name) != null) {
-        response.redirect(request.session().attribute("Current") + "?stylistexists=true");
+    get("/stylists/edit/:id", (request, response) -> {
+      Stylist stylist = tryFindStylist(request.params(":id"));
+      if(stylist != null) {
+        model.put("stylist", stylist);
       } else {
-        Stylist stylist = new Stylist(name);
-        stylist.save();
-        activeClient = null;
-        activeStylist = stylist;
-        response.redirect(request.session().attribute("Current"));
+        response.redirect(request.session().attribute("Prev"));
       }
+      model.put("template", "templates/stylists/edit.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -79,18 +76,6 @@ public class App {
         model.put("stylist", stylist);
       }
       model.put("template", "templates/stylists/delete.vtl");
-      return new ModelAndView(model, layout);
-    }, new VelocityTemplateEngine());
-
-    post("/stylists/delete", (request, response) -> {
-      Stylist stylist = tryFindStylist(request.queryParams("stylistId"));
-      if(stylist != null) {
-        if(activeStylist != null && activeStylist.equals(stylist)) {
-          activeStylist = null;
-        }
-        stylist.delete();
-        response.redirect(request.session().attribute("Prev"));
-      }
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -109,17 +94,6 @@ public class App {
         model.put("notfound", true);
       }
       model.put("template", "templates/stylists/signin.vtl");
-      return new ModelAndView(model, layout);
-    }, new VelocityTemplateEngine());
-
-    post("/stylists/signin", (request, response) -> {
-      String name = request.queryParams("name");
-      if (Stylist.findByName(name) == null) {
-        response.redirect("/stylists/signin?notfound");
-      } else {
-        activeStylist = Stylist.findByName(name);
-        response.redirect("/stylists/profile");
-      }
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -146,6 +120,53 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
+    post("/stylists", (request, response) -> {
+      String name = request.queryParams("name");
+      if (Stylist.findByName(name) != null) {
+        response.redirect(request.session().attribute("Current") + "?stylistexists=true");
+      } else {
+        Stylist stylist = new Stylist(name);
+        stylist.save();
+        activeClient = null;
+        activeStylist = stylist;
+        response.redirect(request.session().attribute("Current"));
+      }
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/stylists/edit", (request, response) -> {
+      Stylist stylist = tryFindStylist(request.queryParams("stylistId"));
+      if(stylist != null) {
+        stylist.setName(request.queryParams("name"));
+        stylist.update();
+        response.redirect(request.session().attribute("Prev"));
+      }
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/stylists/delete", (request, response) -> {
+      Stylist stylist = tryFindStylist(request.queryParams("stylistId"));
+      if(stylist != null) {
+        if(activeStylist != null && activeStylist.equals(stylist)) {
+          activeStylist = null;
+        }
+        stylist.delete();
+        response.redirect(request.session().attribute("Prev"));
+      }
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/stylists/signin", (request, response) -> {
+      String name = request.queryParams("name");
+      if (Stylist.findByName(name) == null) {
+        response.redirect("/stylists/signin?notfound");
+      } else {
+        activeStylist = Stylist.findByName(name);
+        response.redirect("/stylists/profile");
+      }
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
     // Clients
     get("/clients", (request, response) -> {
       model.put("clients", Client.all());
@@ -163,17 +184,14 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
-    post("/clients", (request, response) -> {
-      String name = request.queryParams("name");
-      if (Client.findByName(name) != null) {
-        response.redirect(request.session().attribute("Current") + "?clientexists=true");
+    get("/clients/edit/:id", (request, response) -> {
+      Client client = tryFindClient(request.params(":id"));
+      if(client != null) {
+        model.put("client", client);
       } else {
-        Client client = new Client(name);
-        client.save();
-        activeStylist = null;
-        activeClient = client;
-        response.redirect(request.session().attribute("Current"));
+        response.redirect(request.session().attribute("Prev"));
       }
+      model.put("template", "templates/clients/edit.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -183,18 +201,6 @@ public class App {
         model.put("client", client);
       }
       model.put("template", "templates/clients/delete.vtl");
-      return new ModelAndView(model, layout);
-    }, new VelocityTemplateEngine());
-
-    post("/clients/delete", (request, response) -> {
-      Client client = tryFindClient(request.queryParams("clientId"));
-      if(client != null) {
-        if(activeClient != null && activeClient.equals(client)) {
-          activeClient = null;
-        }
-        client.delete();
-        response.redirect(request.session().attribute("Prev"));
-      }
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -213,17 +219,6 @@ public class App {
         model.put("notfound", true);
       }
       model.put("template", "templates/clients/signin.vtl");
-      return new ModelAndView(model, layout);
-    }, new VelocityTemplateEngine());
-
-    post("/clients/signin", (request, response) -> {
-      String name = request.queryParams("name");
-      if (Client.findByName(name) == null) {
-        response.redirect("/clients/signin?notfound");
-      } else {
-        activeClient = Client.findByName(name);
-        response.redirect("/clients/profile");
-      }
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
@@ -250,6 +245,53 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
+    post("/clients", (request, response) -> {
+      String name = request.queryParams("name");
+      if (Client.findByName(name) != null) {
+        response.redirect(request.session().attribute("Current") + "?clientexists=true");
+      } else {
+        Client client = new Client(name);
+        client.save();
+        activeStylist = null;
+        activeClient = client;
+        response.redirect(request.session().attribute("Current"));
+      }
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/clients/edit", (request, response) -> {
+      Client client = tryFindClient(request.queryParams("clientId"));
+      if(client != null) {
+        client.setName(request.queryParams("name"));
+        client.update();
+        response.redirect(request.session().attribute("Prev"));
+      }
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/clients/delete", (request, response) -> {
+      Client client = tryFindClient(request.queryParams("clientId"));
+      if(client != null) {
+        if(activeClient != null && activeClient.equals(client)) {
+          activeClient = null;
+        }
+        client.delete();
+        response.redirect(request.session().attribute("Prev"));
+      }
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/clients/signin", (request, response) -> {
+      String name = request.queryParams("name");
+      if (Client.findByName(name) == null) {
+        response.redirect("/clients/signin?notfound");
+      } else {
+        activeClient = Client.findByName(name);
+        response.redirect("/clients/profile");
+      }
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
     // Owner
     get("/owner", (request, response) -> {
       activeClient = null;
@@ -266,7 +308,6 @@ public class App {
 
   private static Stylist tryFindStylist(String id) {
     Integer stylistId = tryParseInt(id);
-    Stylist stylist;
     if(stylistId != null && Stylist.find(stylistId) != null) {
       return Stylist.find(stylistId);
     } else {
@@ -276,7 +317,6 @@ public class App {
 
   private static Client tryFindClient(String id) {
     Integer clientId = tryParseInt(id);
-    Client client;
     if(clientId != null && Client.find(clientId) != null) {
       return Client.find(clientId);
     } else {
@@ -289,7 +329,7 @@ public class App {
     try {
       number = Integer.parseInt(toParse);
     } catch (NumberFormatException e) {
-      System.out.println("Error: " + e.getMessage());
+      System.out.println("Error parsing integer: " + e.getMessage());
     }
     return number;
   }

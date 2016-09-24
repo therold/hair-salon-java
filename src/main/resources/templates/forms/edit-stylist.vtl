@@ -1,0 +1,8 @@
+<form action="/stylists/edit" method="post">
+  <input id="stylistId" name="stylistId" value="$stylist.getId()" hidden>
+  <div class="form-group">
+    <label for="name">Name:</label>
+    <input id="name" name="name" class="form-control" type="text" value="$stylist.getName()" required>
+  </div>
+  <button class="btn btn-success" type="submit">Update account</button>
+</form>
