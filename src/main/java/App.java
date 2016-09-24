@@ -13,12 +13,6 @@ public class App {
     staticFileLocation("/public");
     String layout = "templates/layout.vtl";
     model = new HashMap<String, Object>();
-    Stylist testStylist = new Stylist("Test");
-    testStylist.save();
-    Client testClient = new Client("Test");
-    testClient.setStylistId(testStylist.getId());
-    testClient.save();
-    System.out.println(Client.withStylistId(testStylist.getId()).contains(testClient));
 
     before((request, response) -> {
       model.clear();
@@ -270,11 +264,13 @@ public class App {
     }, new VelocityTemplateEngine());
 
     post("/clients", (request, response) -> {
-      String name = request.queryParams("name");
-      if (Client.findByUsername(name) != null) {
+      String username = request.queryParams("username");
+      if (Client.findByUserName(username) != null) {
         response.redirect(request.session().attribute("Current") + "?clientexists=true");
       } else {
-        Client client = new Client(name);
+        String firstName = request.queryParams("firstname");
+        String lastName = request.queryParams("lastname");
+        Client client = new Client(username, firstName, lastName);
         client.save();
         activeStylist = null;
         activeClient = client;
@@ -286,7 +282,7 @@ public class App {
     post("/clients/edit", (request, response) -> {
       Client client = tryFindClient(request.queryParams("clientId"));
       if(client != null) {
-        client.setUsername(request.queryParams("name"));
+        client.setUserName(request.queryParams("name"));
         client.update();
         response.redirect(request.session().attribute("Prev"));
       }
@@ -307,10 +303,10 @@ public class App {
 
     post("/clients/signin", (request, response) -> {
       String name = request.queryParams("name");
-      if (Client.findByUsername(name) == null) {
+      if (Client.findByUserName(name) == null) {
         response.redirect("/clients/signin?notfound");
       } else {
-        activeClient = Client.findByUsername(name);
+        activeClient = Client.findByUserName(name);
         response.redirect("/clients/profile");
       }
       return new ModelAndView(model, layout);

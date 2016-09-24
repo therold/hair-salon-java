@@ -4,6 +4,8 @@ import org.sql2o.*;
 public class Stylist {
   private int id;
   private String username;
+  private String firstName;
+  private String lastName;
 
   public Stylist(String username) {
     this.username = username;
@@ -19,6 +21,26 @@ public class Stylist {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  public String getFirstName() {
+    return this.firstName;
+  }
+
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
+
+  public String getLastLast() {
+    return this.lastName;
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
+
+  public String getFullName() {
+    return this.firstName + " " + this.lastName;
   }
 
   public void save() {
