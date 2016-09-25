@@ -1,1 +1,7 @@
 <h3>$client.getUserName()</h3>
+<p>Name: $client.getUserName()</p>
+#if ($client.getStylistId())
+  <p>Stylist: $Stylist.find($client.getStylistId()).getUserName() - $Stylist.find($client.getStylistId()).getFullName()</p>
+#else
+  <p>Stylist: None</p>
+#end

@@ -119,6 +119,9 @@ public class App {
     get("/stylists/profile", (request, response) -> {
       if (activeStylist == null) {
         response.redirect("/");
+      } else {
+        model.put("clients", Client.withStylistId(activeStylist.getId()));
+        model.put("Stylist", Stylist.class);
       }
       model.put("template", "templates/stylists/profile.vtl");
       return new ModelAndView(model, layout);
@@ -233,6 +236,7 @@ public class App {
       if(client != null) {
         model.put("client", client);
       }
+      model.put("Stylist", Stylist.class);
       model.put("template", "templates/clients/delete.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
@@ -265,6 +269,7 @@ public class App {
       if (activeClient == null) {
         response.redirect("/");
       }
+      model.put("Stylist", Stylist.class);
       model.put("template", "templates/clients/profile.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
@@ -274,6 +279,7 @@ public class App {
       if(client != null) {
         model.put("client", client);
       }
+      model.put("Stylist", Stylist.class);
       model.put("template", "templates/clients/view.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
